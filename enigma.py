@@ -15,29 +15,23 @@ import string
 class Rotor:
     def __init__(self, name, start, rotoratright=None):
         if name == 1: # Rotor tipo I
-            self.type = name
             self.d_wiring = dict(zip(string.ascii_lowercase, "ekmflgdqvzntowyhxuspaibrcj")) # mapeado de las conexiones internas
             self.r_wiring = dict(zip("ekmflgdqvzntowyhxuspaibrcj", string.ascii_lowercase)) # mapeado inverso
-            self.position = start
             self.turnover = "q" # from q to r
-            self.rotated = False
-            self.rightrotor = rotoratright # el rotor que tiene a su derecha, si no tiene None
         elif name == 2: # Rotor tipo II
-            self.type = name
             self.d_wiring = dict(zip(string.ascii_lowercase, "ajdksiruxblhwtmcqgznpyfvoe"))
             self.r_wiring = dict(zip("ajdksiruxblhwtmcqgznpyfvoe", string.ascii_lowercase))
-            self.position = start
             self.turnover = "e" # from e to f
-            self.rotated = False
-            self.rightrotor = rotoratright
         elif name == 3: # Rotor tipo III
-            self.type = name
             self.d_wiring = dict(zip(string.ascii_lowercase, "bdfhjlcprtxvznyeiwgakmusqo"))
             self.r_wiring = dict(zip("bdfhjlcprtxvznyeiwgakmusqo", string.ascii_lowercase))
-            self.position = start
             self.turnover = "v" # from v to w
-            self.rotated = False
-            self.rightrotor = rotoratright            
+        
+        self.type = name
+        self.position = start
+        self.rotated = False
+        self.rightrotor = rotoratright # el rotor que tiene a su derecha, si no tiene None
+
 
     def __str__(self):
         return "Rotor type {}, pos = {}".format(self.type, self.position)
@@ -95,10 +89,10 @@ class Enigma:
         self.r3 = Rotor(3, "a", self.r2)
         self.reflector = dict(zip(string.ascii_lowercase, "yruhqsldpxngokmiebfzcwvjat"))
     def encrypt(self, s):
-        # en vez de hacer un print, habria que guardarlo en un string y al final return...
-        for c in s:
+        out = []
+        for c in s.lower():
             if c not in string.ascii_lowercase:
-                print(c, end="")
+                out.append(c)
                 continue
             c = self.r1.d_encrypt(c)
             c = self.r2.d_encrypt(c)
@@ -110,11 +104,10 @@ class Enigma:
             c = self.r2.r_encrypt(c)
             c = self.r1.r_encrypt(c)
 
-            print(c, end="")
+            out.append(c)
             #print("{}[{}{}{}]".format(c, self.r3.position, self.r2.position, self.r1.position), end="")
-        print("")
-        
+        return "".join(out)
 # uso
 e = Enigma()
-e.encrypt("aaaaa aaaaa aaaaa aaaaa")
+print(e.encrypt("aaaaa aaaaa aaaaa aaaaa"))
 
